@@ -317,6 +317,11 @@
       case 'ArrowLeft':  case 'PageUp':              e.preventDefault(); prev(); break;
       case 'Home':                                    e.preventDefault(); show(0); break;
       case 'End':                                     e.preventDefault(); show(deck.length - 1); break;
+      case '0': case '1': case '2': case '3': case '4':
+      case '5': case '6': case '7': case '8': case '9':
+        e.preventDefault();
+        show(e.key === '0' ? deck.length - 1 : parseInt(e.key, 10) - 1);
+        break;
       case 'p': case 'P':                             window.print(); break;
       case 'i': case 'I':                             tocPanel.classList.toggle('open'); break;
     }
