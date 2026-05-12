@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>DeepSeek-V4 · 迈入百万上下文普惠时代</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ds-blue: #4D6BFE;
+    --ds-blue-deep: #3A52D9;
+    --ds-blue-light: #7E93FF;
+    --ds-blue-wash: #EEF1FF;
+    --ink: #1A1A1A;
+    --ink-2: #5A5A5A;
+    --ink-3: #999999;
+    --line: #E5E7EB;
+    --paper: #FFFFFF;
+    --paper-2: #F7F8FA;
+    --serif: 'Source Serif 4', 'Newsreader', 'Noto Serif SC', 'Songti SC', serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--paper);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-wrap: pretty;
+    min-width: 1280px;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* ============ NAV ============ */
+  nav.top {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav.top .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+  }
+  nav.top .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  nav.top .logo img {
+    height: 28px;
+    width: auto;
+    display: block;
+  }
+  nav.top .actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--ds-blue);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--ds-blue-deep); }
+  .btn-ghost {
+    color: var(--ink);
+    border: 1px solid var(--line);
+    background: transparent;
+  }
+  .btn-ghost:hover { border-color: var(--ink); }
+
+  /* ============ HERO ============ */
+  section.hero {
+    padding: 140px 0 120px;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, var(--ds-blue-wash), transparent 70%),
+      linear-gradient(180deg, #FBFCFF 0%, #FFFFFF 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero .kicker {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ds-blue);
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 92px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-align: center;
+    color: var(--ink);
+    max-width: 1100px;
+    margin: 0 auto 32px;
+  }
+  .hero h1 .accent {
+    color: var(--ds-blue);
+    font-style: italic;
+    font-weight: 400;
+  }
+  /* 中文字符不加letter-spacing，避免字间距过开 */
+  .hero h1 .zh {
+    letter-spacing: 0;
+  }
+  .hero .sub {
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 28px;
+  }
+  .hero .sub.sub-context {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink-3);
+    max-width: 760px;
+    margin: 0 auto 64px;
+    padding: 20px 28px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .hero .cta-row {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 96px;
+  }
+  .hero .cta-row .btn {
+    padding: 14px 28px;
+    font-size: 15px;
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    max-width: 960px;
+    margin: 0 auto;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .stat {
+    padding: 40px 32px;
+    text-align: center;
+    border-right: 1px solid var(--line);
+  }
+  .stat:last-child { border-right: none; }
+  .stat .num {
+    font-family: var(--serif);
+    font-size: 68px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin-bottom: 14px;
+    font-feature-settings: "tnum", "lnum";
+  }
+  .stat .num .unit {
+    font-size: 24px;
+    color: var(--ink-2);
+    margin-left: 4px;
+  }
+  .stat .label {
+    font-size: 13px;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+  }
+  .stat .compare {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ============ SECTION SHARED ============ */
+  section.block {
+    padding: 140px 0;
+  }
+  section.block.tinted {
+    background: var(--paper-2);
+  }
+  .section-head {
+    max-width: 800px;
+    margin: 0 auto 80px;
+    text-align: center;
+  }
+  .section-head .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ds-blue);
+    margin-bottom: 20px;
+  }
+  .section-head h2 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 54px;
+    line-height: 1.18;
+    letter-spacing: 0;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+  .section-head h2 em {
+    font-style: italic;
+    color: var(--ds-blue);
+    font-weight: 400;
+  }
+  .section-head p {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--ink-2);
+  }
+
+  /* ============ TWO MODELS ============ */
+  .model-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .model-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 48px 40px;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  .model-card:hover {
+    border-color: var(--ds-blue);
+    transform: translateY(-2px);
+  }
+  .model-card.pro {
+    background: linear-gradient(180deg, var(--ds-blue-wash) 0%, var(--paper) 60%);
+  }
+  .model-card .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--ds-blue);
+    background: var(--ds-blue-wash);
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  .model-card .name {
+    font-family: var(--serif);
+    font-size: 42px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    margin-bottom: 10px;
+  }
+  .model-card .tagline {
+    font-size: 15px;
+    color: var(--ink-2);
+    margin-bottom: 36px;
+    line-height: 1.55;
+  }
+  .spec-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 24px;
+    margin-bottom: 32px;
+  }
+  .spec-list li {
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+  .spec-list .spec-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .spec-list .spec-value {
+    font-family: var(--serif);
+    font-size: 24px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .model-card .verdict {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .model-card .verdict strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ============ FOUR INNOVATIONS ============ */
+  .innov-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .innov-card {
+    background: var(--paper);
+    padding: 48px 44px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .innov-card .num {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    margin-bottom: 24px;
+  }
+  .innov-card .title {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    color: var(--ds-blue);
+    margin-bottom: 6px;
+  }
+  .innov-card .subtitle {
+    font-size: 13px;
+    color: var(--ink-2);
+    font-family: var(--mono);
+    margin-bottom: 20px;
+    letter-spacing: 0.01em;
+  }
+  .innov-card .desc {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+    flex: 1;
+  }
+  .innov-card .desc strong {
+    color: var(--ds-blue);
+    font-weight: 500;
+  }
+
+  /* ============ EFFICIENCY ============ */
+  .eff-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .chart-box {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 48px 40px;
+    aspect-ratio: 4 / 3;
+    position: relative;
+  }
+  .chart-box svg { width: 100%; height: 100%; display: block; }
+  .eff-text h3 {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    margin-bottom: 24px;
+  }
+  .eff-text h3 em {
+    font-style: italic;
+    color: var(--ds-blue);
+  }
+  .eff-text p {
+    font-size: 17px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .eff-text ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .eff-text ul li {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .eff-text ul li .big {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 400;
+    color: var(--ds-blue);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    min-width: 120px;
+  }
+  .eff-text ul li .small {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+
+  /* ============ BENCHMARKS ============ */
+  .bench-table {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .bench-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1.1fr;
+    align-items: center;
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--line);
+    gap: 24px;
+  }
+  .bench-row:last-child { border-bottom: none; }
+  .bench-row.header {
+    background: var(--paper-2);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .bench-row .bench-name {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .bench-row .bench-name .main {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .bench-row .bench-name .meta {
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+  .bench-val {
+    font-family: var(--serif);
+    font-size: 22px;
+    letter-spacing: -0.01em;
+    color: var(--ink-3);
+    text-align: right;
+  }
+  .bench-val.winner {
+    color: var(--ds-blue);
+    font-weight: 500;
+    font-size: 28px;
+    position: relative;
+  }
+  .bench-val.opensource {
+    color: var(--ds-blue);
+    font-weight: 500;
+    font-size: 26px;
+    opacity: 0.85;
+  }
+  .oss-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ds-blue);
+    background: var(--ds-blue-wash);
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
+    transform: translateY(-1px);
+  }
+
+  /* ============ HONESTY ============ */
+  .honesty-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .honesty-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 44px 40px;
+    display: flex;
+    flex-direction: column;
+  }
+  .honesty-card .honesty-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--ds-blue);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .honesty-card .honesty-title {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+  .honesty-card .honesty-body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--ink-2);
+    margin-bottom: 20px;
+    flex: 1;
+  }
+  .honesty-card .honesty-body strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .honesty-card .honesty-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  /* ============ PRICING ============ */
+  .price-stack {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+  .price-card.flash-price {
+    background: var(--paper);
+    border: 1px solid var(--ds-blue);
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .price-card.flash-price::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, var(--ds-blue-wash) 0%, transparent 70%);
+    opacity: 1;
+    border-radius: 50%;
+  }
+  .flash-tag {
+    color: var(--ds-blue) !important;
+    background: var(--ds-blue-wash);
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+  }
+  .price-card.flash-price h3.flash-h3 {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+    position: relative;
+  }
+  .price-card.flash-price .price-row {
+    border-bottom: 1px solid var(--line);
+  }
+  .price-card.flash-price .price-row .pr-label {
+    color: var(--ink-2);
+  }
+  .price-card.flash-price .price-row .pr-val {
+    color: var(--ds-blue);
+  }
+  .price-card.flash-price .price-row .pr-val .unit {
+    color: var(--ink-3);
+  }
+
+  .ascend-quote {
+    background: var(--paper-2);
+    border-left: 3px solid var(--ds-blue);
+    padding: 36px 44px;
+    border-radius: 0 16px 16px 0;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .ascend-mark {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ds-blue);
+    margin-bottom: 16px;
+  }
+  .ascend-text {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.6;
+    color: var(--ink);
+    font-weight: 400;
+    font-style: normal;
+    margin-bottom: 18px;
+    letter-spacing: 0;
+  }
+  .ascend-cite {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-3);
+    font-style: normal;
+    letter-spacing: 0.04em;
+    margin-bottom: 20px;
+  }
+  .ascend-note {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  .price-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .price-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 48px 44px;
+  }
+  .price-card.hero-price {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .price-card.hero-price::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, var(--ds-blue) 0%, transparent 70%);
+    opacity: 0.35;
+    border-radius: 50%;
+  }
+  .price-card .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ds-blue-light);
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .price-card.hero-price h3 {
+    font-family: var(--serif);
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 36px;
+    letter-spacing: -0.015em;
+    position: relative;
+  }
+  .price-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+  }
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .price-row:last-child { border-bottom: none; }
+  .price-row .pr-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.65);
+  }
+  .price-row .pr-val {
+    font-family: var(--serif);
+    font-size: 38px;
+    letter-spacing: -0.02em;
+    color: white;
+  }
+  .price-row .pr-val .unit {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-left: 4px;
+    font-family: var(--sans);
+  }
+
+  .price-side h4 {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+  .price-side p {
+    font-size: 15px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .compare-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .compare-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-row .cmp-label { color: var(--ink-2); }
+  .compare-row .cmp-val {
+    font-family: var(--mono);
+    color: var(--ds-blue);
+    font-weight: 500;
+  }
+
+  /* ============ ECOSYSTEM ============ */
+  .eco-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--line);
+  }
+  .eco-card {
+    background: var(--paper);
+    padding: 40px 32px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background 0.2s ease;
+  }
+  .eco-card:hover {
+    background: var(--paper-2);
+  }
+  .eco-card .eco-name {
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 400;
+    color: var(--ds-blue);
+    letter-spacing: -0.01em;
+  }
+  .eco-card .eco-desc {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.7;
+  }
+
+  /* ============ QUOTE ============ */
+  section.quote-block {
+    padding: 180px 0;
+    background:
+      radial-gradient(800px 400px at 50% 50%, var(--ds-blue-wash), transparent 70%),
+      var(--paper);
+    text-align: center;
+  }
+  .quote-block blockquote {
+    font-family: 'Songti SC', 'STSong', 'Source Serif 4', serif;
+    font-size: 54px;
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    max-width: 900px;
+    margin: 0 auto 40px;
+  }
+  .quote-block blockquote::before,
+  .quote-block blockquote::after {
+    color: var(--ds-blue);
+    opacity: 0.5;
+    font-weight: 300;
+  }
+  .quote-block cite {
+    font-style: normal;
+    font-size: 14px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    background: var(--ink);
+    color: rgba(255, 255, 255, 0.7);
+    padding: 80px 0 48px;
+  }
+  footer .foot-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 48px;
+    align-items: center;
+    padding-bottom: 48px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  footer .foot-left {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  footer .foot-logo img {
+    height: 24px;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+  }
+  footer .foot-left p {
+    font-size: 14px;
+    max-width: 480px;
+    line-height: 1.6;
+  }
+  footer .foot-links {
+    display: flex;
+    gap: 12px;
+  }
+  footer .foot-links a {
+    padding: 10px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    font-size: 13px;
+    color: white;
+    transition: all 0.2s ease;
+  }
+  footer .foot-links a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+  footer .copy {
+    padding-top: 32px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Placeholder style */
+  .placeholder {
+    outline: 1px dashed var(--ds-blue-light);
+    outline-offset: 4px;
+    background: var(--ds-blue-wash);
+    color: var(--ds-blue);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top">
+  <div class="container inner">
+    <a href="#" class="logo">
+      <img src="./assets/deepseek-logo.png" alt="DeepSeek">
+    </a>
+    <div class="actions">
+      <a href="https://api-docs.deepseek.com" class="btn btn-ghost">API 文档</a>
+      <a href="https://chat.deepseek.com" class="btn btn-primary">体验 chat.deepseek.com →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="kicker">DeepSeek-V4 Preview · 2026.04.24</div>
+    <h1><span class="zh">迈入</span><span class="accent zh">百万上下文</span><span class="zh">普惠时代</span></h1>
+    <p class="sub">DeepSeek-V4 预览版在今天开源。两个尺寸、1M token 标配、FLOPs 与 KV Cache 同时压缩至一个数量级。</p>
+    <p class="sub sub-context">这不是冲破天花板的世界最佳发布。就在一周前 Opus 4.7 上线、昨天 GPT-5.5 发布，新 SOTA 已在别处。<br>V4 做的另一件事是，把 1M 超长上下文的 agent 模型，第一次交到每个开发者手里。</p>
+    <div class="cta-row">
+      <a href="https://chat.deepseek.com" class="btn btn-primary">体验 chat.deepseek.com</a>
+      <a href="https://huggingface.co/deepseek-ai" class="btn btn-ghost">HuggingFace 下载</a>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="num">1,000,000<span class="unit">tokens</span></div>
+        <div class="label">上下文窗口</div>
+        <div class="compare">官方全线标配 · 含 API / App / Chat</div>
+      </div>
+      <div class="stat">
+        <div class="num">27<span class="unit">%</span></div>
+        <div class="label">单 token 推理 FLOPs</div>
+        <div class="compare">相比 V3.2 · 9.8× lower</div>
+      </div>
+      <div class="stat">
+        <div class="num">10<span class="unit">%</span></div>
+        <div class="label">KV Cache 占用</div>
+        <div class="compare">相比 V3.2 · 13.7× smaller</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TWO MODELS -->
+<section class="block">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Two Sizes · One Philosophy</div>
+      <h2>一个做<em>顶级闭源的对手</em>，<br>一个做<em>高性价比的普及者</em>。</h2>
+      <p>论文对标 GPT-5.4 与 Claude Opus 4.6。V4-Flash 用更小激活参数反超 V3.2-Base，成为真正意义上的价格屠夫。</p>
+    </div>
+
+    <div class="model-grid">
+      <div class="model-card pro">
+        <span class="tag">FLAGSHIP</span>
+        <div class="name">V4-Pro</div>
+        <p class="tagline">公司内部员工的默认 Agentic Coding 模型。性能接近 Opus 4.6，推理优于 Sonnet 4.5。</p>
+        <ul class="spec-list">
+          <li>
+            <div class="spec-label">Total Params</div>
+            <div class="spec-value">1.6 T</div>
+          </li>
+          <li>
+            <div class="spec-label">Activated</div>
+            <div class="spec-value">49 B</div>
+          </li>
+          <li>
+            <div class="spec-label">Layers</div>
+            <div class="spec-value">61</div>
+          </li>
+          <li>
+            <div class="spec-label">Experts</div>
+            <div class="spec-value">384</div>
+          </li>
+        </ul>
+        <p class="verdict"><strong>论文对标</strong> GPT-5.4 xHigh · Claude Opus 4.6 Max · Gemini 3.1 Pro High<br><span style="color: var(--ink-3); font-size: 13px;">发布时新 SOTA 已是 Opus 4.7（04-16）与 GPT-5.5（04-23）</span></p>
+      </div>
+
+      <div class="model-card">
+        <span class="tag">EFFICIENT</span>
+        <div class="name">V4-Flash</div>
+        <p class="tagline">用 V3.2-Base 五分之一的激活参数，跑出反超 V3.2-Base 的综合得分。</p>
+        <ul class="spec-list">
+          <li>
+            <div class="spec-label">Total Params</div>
+            <div class="spec-value">284 B</div>
+          </li>
+          <li>
+            <div class="spec-label">Activated</div>
+            <div class="spec-value">13 B</div>
+          </li>
+          <li>
+            <div class="spec-label">Layers</div>
+            <div class="spec-value">43</div>
+          </li>
+          <li>
+            <div class="spec-label">Experts</div>
+            <div class="spec-value">256</div>
+          </li>
+        </ul>
+        <p class="verdict"><strong>定位</strong> 速度与成本优先的生产环境 · API 默认主力</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUR INNOVATIONS -->
+<section class="block tinted">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Architectural Innovations</div>
+      <h2>四刀砍在<em>底层机制</em>上</h2>
+      <p>V4 没有发明新的损失函数、没有改 MoE 路由。所有创新都集中在「信号怎么流动」和「梯度怎么更新」。</p>
+    </div>
+
+    <div class="innov-grid">
+      <div class="innov-card">
+        <div class="num">01 · Residual</div>
+        <div class="title">mHC</div>
+        <div class="subtitle">Manifold-Constrained Hyper-Connections</div>
+        <p class="desc">给残差连接加了一道<strong>「只准收缩不准放大」</strong>的数学护栏。把残差映射约束到双随机矩阵流形上，谱范数恒 ≤ 1，深层堆叠不再炸。</p>
+      </div>
+      <div class="innov-card">
+        <div class="num">02 · Attention</div>
+        <div class="title">CSA + HCA</div>
+        <div class="subtitle">Compressed Sparse + Heavily Compressed Attention</div>
+        <p class="desc">粗细两把筛子在 Transformer 块之间交替。CSA 用 Lightning Indexer 挑 top-k 做稀疏；HCA 激进压缩、dense 扫全局。<strong>1M 上下文 KV cache 仅为 GQA8 baseline 的约 2%</strong>。</p>
+      </div>
+      <div class="innov-card">
+        <div class="num">03 · Optimizer</div>
+        <div class="title">Muon</div>
+        <div class="subtitle">Orthogonalized Momentum</div>
+        <p class="desc">替代大部分模块的 AdamW。用 Newton-Schulz 迭代把动量矩阵投影成正交矩阵，每个方向更新步长相等。<strong>不偏科、更稳、收敛更快</strong>，且可以直接复用 AdamW 的超参。</p>
+      </div>
+      <div class="innov-card">
+        <div class="num">04 · Precision</div>
+        <div class="title">FP4 QAT</div>
+        <div class="subtitle">Quantization-Aware Training</div>
+        <p class="desc">量化感知训练让训练和推理<strong>比特级一致</strong>。KV 存储用混合精度：RoPE 维度 BF16、其余 FP8、Lightning Indexer 直接 FP4。省显存的同时不掉点。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EFFICIENCY -->
+<section class="block">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Efficiency Breakthrough</div>
+      <h2>在 1M 上下文下，<em>算一次</em>的代价<br>只有 V3.2 的四分之一</h2>
+    </div>
+
+    <div class="eff-grid">
+      <div class="chart-box">
+        <svg viewBox="0 0 500 375" xmlns="http://www.w3.org/2000/svg">
+          <!-- Title -->
+          <text x="40" y="28" font-family="Source Serif 4, serif" font-size="14" fill="#1A1A1A" font-weight="500">Per-token inference cost</text>
+          <text x="40" y="46" font-family="'JetBrains Mono', monospace" font-size="10" fill="#999" letter-spacing="0.05em">V3.2 baseline vs V4 architecture</text>
+
+          <!-- Y/X axes -->
+          <line x1="60" y1="320" x2="470" y2="320" stroke="#E5E7EB" stroke-width="1"/>
+          <line x1="60" y1="70" x2="60" y2="320" stroke="#E5E7EB" stroke-width="1"/>
+
+          <!-- grid -->
+          <line x1="60" y1="250" x2="470" y2="250" stroke="#F0F2F5" stroke-width="1" stroke-dasharray="2,3"/>
+          <line x1="60" y1="180" x2="470" y2="180" stroke="#F0F2F5" stroke-width="1" stroke-dasharray="2,3"/>
+          <line x1="60" y1="110" x2="470" y2="110" stroke="#F0F2F5" stroke-width="1" stroke-dasharray="2,3"/>
+
+          <!-- Shaded gap -->
+          <path d="M 60 305 Q 180 295 260 260 T 470 90 L 470 295 Q 360 290 260 285 T 60 310 Z" fill="#4D6BFE" opacity="0.08"/>
+
+          <!-- V3.2 curve (dashed, steep climb from flat to high) -->
+          <path d="M 60 305 Q 180 295 260 260 T 470 90" fill="none" stroke="#5A5A5A" stroke-width="1.8" stroke-dasharray="6,4"/>
+
+          <!-- V4 curve (solid, nearly flat) -->
+          <path d="M 60 310 Q 180 306 260 298 T 470 285" fill="none" stroke="#4D6BFE" stroke-width="2.8"/>
+
+          <!-- V4-Flash curve (lightest, flattest) -->
+          <path d="M 60 314 Q 180 311 260 305 T 470 295" fill="none" stroke="#7E93FF" stroke-width="2"/>
+
+          <!-- End point markers -->
+          <circle cx="470" cy="90" r="4" fill="#5A5A5A"/>
+          <circle cx="470" cy="285" r="5" fill="#4D6BFE"/>
+          <circle cx="470" cy="295" r="4" fill="#7E93FF"/>
+
+          <!-- End labels -->
+          <text x="455" y="82" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="11" fill="#5A5A5A" font-weight="500">V3.2</text>
+          <text x="455" y="278" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="11" fill="#4D6BFE" font-weight="600">V4-Pro</text>
+
+          <!-- Highlight callout pointing to gap -->
+          <line x1="330" y1="145" x2="330" y2="275" stroke="#4D6BFE" stroke-width="1" stroke-dasharray="2,2" opacity="0.4"/>
+          <g transform="translate(330, 205)">
+            <rect x="-60" y="-18" width="120" height="36" rx="18" fill="#4D6BFE"/>
+            <text x="0" y="5" text-anchor="middle" font-family="Source Serif 4, serif" font-size="14" fill="white" font-weight="500">9.8× lower</text>
+          </g>
+
+          <!-- X axis labels -->
+          <text x="60" y="340" font-family="'JetBrains Mono', monospace" font-size="10" fill="#999">4K</text>
+          <text x="200" y="340" font-family="'JetBrains Mono', monospace" font-size="10" fill="#999">64K</text>
+          <text x="330" y="340" font-family="'JetBrains Mono', monospace" font-size="10" fill="#999">256K</text>
+          <text x="455" y="340" font-family="'JetBrains Mono', monospace" font-size="10" fill="#999">1M</text>
+          <text x="265" y="365" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#999" letter-spacing="0.12em">CONTEXT LENGTH →</text>
+
+          <!-- Y axis label -->
+          <text transform="translate(32, 195) rotate(-90)" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="9" fill="#999" letter-spacing="0.12em">FLOPs · per token</text>
+        </svg>
+      </div>
+
+      <div class="eff-text">
+        <h3>同样的 1M token 请求，<em>V4 只需 V3.2 的 27%</em> 计算、10% 内存。</h3>
+        <p>秘密不在于更大的显卡或更多的参数。CSA+HCA 混合注意力让 query 在不同层之间看「细节」或看「全局」，把多余的注意力当场剪掉。</p>
+        <ul>
+          <li>
+            <div class="big">9.8×</div>
+            <div class="small">lower FLOPs<br>单 token 推理算力</div>
+          </li>
+          <li>
+            <div class="big">13.7×</div>
+            <div class="small">smaller KV Cache<br>长上下文显存占用</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENCHMARKS -->
+<section class="block tinted">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Benchmarks · 对标最新 SOTA</div>
+      <h2>在做题解题赛道，<br>V4-Pro 就是<em>那个新的上限</em></h2>
+      <p>对标升级：Opus 4.7（2026-04-16）与 GPT-5.5（2026-04-23）。数据取自 DS-V4 技术报告、Opus 4.7 System Card 与 GPT-5.5 官方博客。「—」为原厂未披露或口径不一致。</p>
+    </div>
+
+    <div class="bench-table">
+      <div class="bench-row header">
+        <div>Benchmark</div>
+        <div style="text-align: right;">V4-Pro</div>
+        <div style="text-align: right;">Opus 4.7</div>
+        <div style="text-align: right;">GPT-5.5</div>
+        <div style="text-align: right;">Gemini 3.1 Pro</div>
+      </div>
+      <div class="bench-row">
+        <div class="bench-name">
+          <div class="main">Codeforces</div>
+          <div class="meta">Competitive programming · Elo</div>
+        </div>
+        <div class="bench-val winner">3206</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">3052</div>
+      </div>
+      <div class="bench-row">
+        <div class="bench-name">
+          <div class="main">LiveCodeBench</div>
+          <div class="meta">Pass@1 · 2025 splits</div>
+        </div>
+        <div class="bench-val winner">93.5</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">91.7</div>
+      </div>
+      <div class="bench-row">
+        <div class="bench-name">
+          <div class="main">Putnam-2025</div>
+          <div class="meta">形式化数学 · Lean 证明 · /120</div>
+        </div>
+        <div class="bench-val winner">120 / 120</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">—</div>
+      </div>
+      <div class="bench-row">
+        <div class="bench-name">
+          <div class="main">Apex Shortlist</div>
+          <div class="meta">数学奥赛 shortlist</div>
+        </div>
+        <div class="bench-val winner">90.2</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">89.1</div>
+      </div>
+      <div class="bench-row">
+        <div class="bench-name">
+          <div class="main">SWE-Bench Verified <span class="oss-badge">工程类</span></div>
+          <div class="meta">真实 GitHub issue · pass rate</div>
+        </div>
+        <div class="bench-val opensource">80.6%</div>
+        <div class="bench-val">87.6%</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">80.6%</div>
+      </div>
+      <div class="bench-row">
+        <div class="bench-name">
+          <div class="main">Terminal-Bench 2.0 <span class="oss-badge">Agent</span></div>
+          <div class="meta">终端长 horizon 任务</div>
+        </div>
+        <div class="bench-val opensource">67.9%</div>
+        <div class="bench-val">69.4%</div>
+        <div class="bench-val">82.7%</div>
+        <div class="bench-val">68.5%</div>
+      </div>
+      <div class="bench-row">
+        <div class="bench-name">
+          <div class="main">Chinese Writing</div>
+          <div class="meta">vs Gemini 3.1 Pro · 写作质量胜率</div>
+        </div>
+        <div class="bench-val winner">77.5%</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">—</div>
+        <div class="bench-val">22.5%</div>
+      </div>
+    </div>
+
+    <p style="font-size: 13px; color: var(--ink-3); text-align: center; margin-top: 32px; max-width: 760px; margin-left: auto; margin-right: auto; line-height: 1.7;">
+      做题 · 解题 · 形式化证明 · 竞赛编程 —— 这些有明确答案的赛道，V4-Pro 是新上限。<br>
+      Agent / 工程代码 / 长 horizon 任务 —— V4-Pro 追上开源阵营前列，但仍落后 Opus 4.7 与 GPT-5.5 半个版本代差。
+    </p>
+  </div>
+</section>
+
+<!-- HONESTY -->
+<section class="block">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Honesty · 论文里的自我审视</div>
+      <h2>擅长做题，<em>品味还差火候</em>。<br>论文自己先把局限写清楚。</h2>
+      <p>V4 是第一个在数学/编程单科目上反超闭源旗舰的开源模型，但在需要品味的任务上仍输 Opus。这份诚实写在论文里，不是藏着。</p>
+    </div>
+
+    <div class="honesty-grid">
+      <div class="honesty-card">
+        <div class="honesty-num">品味差</div>
+        <div class="honesty-title">创意写作高难度场景，输 Opus 4.5。</div>
+        <p class="honesty-body">日常中文写作 V4-Pro 对 Gemini 3.1 Pro 的写作质量胜率是 77.5%，几乎碾压。但一旦换成高难度多约束的创意场景对标 Claude Opus 4.5，胜率掉到 45.9%，翻车。<strong>更别提 Opus 4.6 / 4.7。</strong></p>
+        <div class="honesty-meta">来源：技术报告 Section 5.4 Chinese Writing</div>
+      </div>
+      <div class="honesty-card">
+        <div class="honesty-num">Agent 短板</div>
+        <div class="honesty-title">长 horizon 工具调用仍落后闭源半档。</div>
+        <p class="honesty-body">Terminal-Bench 2.0 落后 GPT-5.5 整整 14.8 分。HLE w/ tools 甚至输给 K2.6-Thinking。论文原话：<strong>「所有开源模型仍落后闭源对手」</strong>——不演、不粉饰。</p>
+        <div class="honesty-meta">来源：技术报告 Section 5.3 Agent Benchmark</div>
+      </div>
+      <div class="honesty-card">
+        <div class="honesty-num">知识广度</div>
+        <div class="honesty-title">HLE、GPQA、MMLU-Pro 仍被 Gemini 压制。</div>
+        <p class="honesty-body">知识类四冠王仍是 Gemini 3.1 Pro。V4-Pro-Max 的 HLE 是 37.7，比 Gemini 低 6.7 分。论文承认：通用世界知识上，开源「缩短到接近但未追平」。</p>
+        <div class="honesty-meta">来源：技术报告 Section 5.3 Knowledge Benchmark</div>
+      </div>
+      <div class="honesty-card">
+        <div class="honesty-num">本分姿态</div>
+        <div class="honesty-title">把竞赛选手基因写在论文里。</div>
+        <p class="honesty-body">DeepSeek 招的员工大多数是竞赛获奖选手。模型在做题解题上的强势、在品味任务上的弱势，本质上是一种基因的延伸——这一点，论文里写得坦白，发布文里也没藏着。</p>
+        <div class="honesty-meta">花生视角 · 观点 2 + 4</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="block tinted">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Pricing · 官方人民币价格</div>
+      <h2>普惠叙事的主力是<em> Flash </em>，<br>Pro 在等国产芯片放量。</h2>
+      <p>所有价格为 DeepSeek 官方人民币报价，单位「元 / 百万 token」。缓存命中指已用过的上下文前缀再次使用。</p>
+    </div>
+
+    <div class="price-stack">
+
+      <div class="price-card hero-price">
+        <div class="tag">DEEPSEEK-V4-PRO · 元 / M tokens</div>
+        <h3>V4-Pro：对标顶级闭源的<br>开源最佳。</h3>
+        <div class="price-rows">
+          <div class="price-row">
+            <div class="pr-label">输入 · 缓存命中</div>
+            <div class="pr-val">1<span class="unit">元 / M</span></div>
+          </div>
+          <div class="price-row">
+            <div class="pr-label">输入 · 缓存未命中</div>
+            <div class="pr-val">12<span class="unit">元 / M</span></div>
+          </div>
+          <div class="price-row">
+            <div class="pr-label">输出</div>
+            <div class="pr-val">24<span class="unit">元 / M</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="price-card flash-price">
+        <div class="tag flash-tag">DEEPSEEK-V4-FLASH · 元 / M tokens</div>
+        <h3 class="flash-h3">V4-Flash：真正的价格屠夫，<br>把 1M 上下文变成默认档位。</h3>
+        <div class="price-rows flash-rows">
+          <div class="price-row">
+            <div class="pr-label">输入 · 缓存命中</div>
+            <div class="pr-val">0.2<span class="unit">元 / M</span></div>
+          </div>
+          <div class="price-row">
+            <div class="pr-label">输入 · 缓存未命中</div>
+            <div class="pr-val">1<span class="unit">元 / M</span></div>
+          </div>
+          <div class="price-row">
+            <div class="pr-label">输出</div>
+            <div class="pr-val">2<span class="unit">元 / M</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="ascend-quote">
+      <div class="ascend-mark">官方原话</div>
+      <blockquote class="ascend-text">
+        「受限于高端算力，目前 Pro 的服务吞吐十分有限，预计下半年昇腾 950 超节点批量上市后，Pro 的价格会大幅下调。」
+      </blockquote>
+      <cite class="ascend-cite">— DeepSeek 官方价格说明，2026-04-24</cite>
+      <p class="ascend-note">不画大饼，先承认约束、给出时间表。这是观点 4「最诚实、本分的模型」的一个切面。</p>
+    </div>
+
+    <div class="price-grid" style="margin-top: 80px;">
+      <div class="price-card price-side">
+        <h4>V4-Pro 相对顶级闭源（输出价）</h4>
+        <p>V4-Pro 对标 Opus 4.6 与 GPT-5.4 的能力，Pro 的定价是「对标顶级闭源的开源最佳」，便宜是结果，不是主打。</p>
+        <div class="compare-rows">
+          <div class="compare-row">
+            <div class="cmp-label">vs Claude Opus 4.7（$25 / M 输出）</div>
+            <div class="cmp-val">约 1/22.5</div>
+          </div>
+          <div class="compare-row">
+            <div class="cmp-label">vs GPT-5.5（$30 / M 输出）</div>
+            <div class="cmp-val">约 1/9</div>
+          </div>
+          <div class="compare-row">
+            <div class="cmp-label">vs Gemini 3.1 Pro（$12 / M 输出）</div>
+            <div class="cmp-val">约 1/3.6</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="price-card price-side">
+        <h4>V4-Flash 的价格屠杀</h4>
+        <p>Flash 的 0.2 元缓存命中价，把 1M 长上下文 agent 第一次做进大多数开发者的日常账单里。</p>
+        <div class="compare-rows">
+          <div class="compare-row">
+            <div class="cmp-label">vs Claude Haiku 4.5（$1 / $5 per M）</div>
+            <div class="cmp-val">约 1/18（输出）</div>
+          </div>
+          <div class="compare-row">
+            <div class="cmp-label">vs GPT-5-mini（$0.25 / $2 per M）</div>
+            <div class="cmp-val">约 1/7（输出）</div>
+          </div>
+          <div class="compare-row">
+            <div class="cmp-label">vs DeepSeek-V3.2</div>
+            <div class="cmp-val">同档位 · 4× 长度</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<section class="block">
+  <div class="container">
+    <div class="section-head">
+      <div class="eyebrow">Ecosystem · Agent 适配</div>
+      <h2>把开源模型，<em>直接塞进</em><br>开发者已经在用的 agent 里。</h2>
+      <p>官方明确提到，V4 已针对主流 Agent 产品做了适配和优化。不是再造一个 IDE，是在别人已经铺好的路上，换一个引擎。</p>
+    </div>
+
+    <div class="eco-grid">
+      <div class="eco-card">
+        <div class="eco-name">Claude Code</div>
+        <div class="eco-desc">Anthropic 官方 CLI，通过 Anthropic 接口兼容直接切换 model_name 即可替换。</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-name">OpenClaw</div>
+        <div class="eco-desc">开源 agent 框架，V4-Pro 是当前唯一可做 agentic coding 默认模型的开源选项。</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-name">OpenCode</div>
+        <div class="eco-desc">开源编码 agent，V4-Flash 的 1M 上下文和低价，适合长文件 refactor 场景。</div>
+      </div>
+      <div class="eco-card">
+        <div class="eco-name">CodeBuddy</div>
+        <div class="eco-desc">国产编码助手，V4 是首个原生接入的国产开源模型，绑定昇腾算力链路。</div>
+      </div>
+    </div>
+
+    <p style="font-size: 14px; color: var(--ink-3); text-align: center; margin-top: 48px; max-width: 720px; margin-left: auto; margin-right: auto; line-height: 1.7;">
+      API 同时兼容 OpenAI ChatCompletions 接口与 Anthropic 接口。多数 agent 项目只需改一行 model_name。
+    </p>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-block">
+  <div class="container">
+    <blockquote>
+      「不诱于誉，不恐于诽，<br>率道而行，端然正己。」
+    </blockquote>
+    <cite>— 荀子 · 非十二子，DeepSeek 官方发布文结语引用</cite>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-left">
+        <div class="foot-logo">
+          <img src="./assets/deepseek-logo.png" alt="DeepSeek">
+        </div>
+        <p>DeepSeek-V4 预览版已开源。技术报告、权重、推理脚本同步发布。</p>
+      </div>
+      <div class="foot-links">
+        <a href="https://chat.deepseek.com">chat.deepseek.com</a>
+        <a href="https://api.deepseek.com">api.deepseek.com</a>
+        <a href="https://huggingface.co/deepseek-ai">HuggingFace</a>
+      </div>
+    </div>
+    <div class="copy">
+      <span>© 2026 DeepSeek-AI · All rights reserved.</span>
+      <span>技术报告解读整理 by 花叔</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
