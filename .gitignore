@@ -4,8 +4,10 @@
 .bing
 .agents
 .claude
-*.gif
-*.mp4
+
+# media
+#*.gif
+#*.mp4
 
 # env
 .env
