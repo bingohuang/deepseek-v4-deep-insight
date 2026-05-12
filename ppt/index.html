@@ -277,6 +277,15 @@
     stage.style.left = '0';
   }
 
+  // 点击 iframe 内容后自动恢复焦点，保证快捷键不失效
+  frame.addEventListener('load', function () {
+    try {
+      frame.contentDocument.addEventListener('pointerup', function () {
+        window.focus();
+      });
+    } catch (_) {}
+  });
+
   function show(idx) {
     if (idx < 0 || idx >= deck.length) return;
     current = idx;
