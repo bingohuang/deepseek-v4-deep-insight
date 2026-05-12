@@ -9,12 +9,14 @@
 <!-- ═══════════════════════════════════════════════════════ -->
 <script>
   window.DECK_MANIFEST = [
-    { file: "slides/00-cover.html",              label: "01 · Cover · 封面" },
+    // { file: "slides/00-cover.html",              label: "§ 第 0 幕" },
+    { file: "slides/00-cover.html",              label: "01 · 封面" },
     { file: "slides/01-onepager.html",           label: "02 · One-Pager · 核心数据速览" },
     { file: "slides/02-positioning.html",        label: "03 · 定位反题" },
     { file: "slides/03-four-theses.html",        label: "04 · 四个核心观点" },
     { file: "slides/04-roadmap.html",            label: "05 · 全篇 Roadmap" },
 
+    // { file: "slides/05-two-models.html",         label: "§ 第 1 幕" },
     { file: "slides/05-two-models.html",         label: "06 · 两款模型" },
     { file: "slides/06-moe-basics.html",         label: "07 · MoE 本质 · 专家会议" },
     { file: "slides/07-sparse-economics.html",   label: "08 · 稀疏激活的经济学" },
@@ -22,6 +24,7 @@
     { file: "slides/09-training-stability.html", label: "10 · 训练稳定性" },
     { file: "slides/10-specs-table.html",        label: "11 · 详细规格大表" },
 
+    // { file: "slides/11-mhc-problem.html",        label: "§ 第 2 幕" },
     { file: "slides/11-mhc-problem.html",        label: "12 · mHC · 残差瓶颈" },
     { file: "slides/12-mhc-intuition.html",      label: "13 · mHC · 核心思想" },
     { file: "slides/13-mhc-math.html",           label: "14 · mHC · 数学本质" },
@@ -29,6 +32,7 @@
     { file: "slides/15-mhc-effect.html",         label: "16 · mHC · 效果" },
     { file: "slides/16-act2-transition.html",    label: "17 · 过渡" },
 
+    // { file: "slides/17-attention-bottleneck.html", label: "§ 第 3 幕" },
     { file: "slides/17-attention-bottleneck.html", label: "18 · Attention · 长上下文瓶颈" },
     { file: "slides/18-hybrid-idea.html",         label: "19 · Attention · 粗细配合" },
     { file: "slides/19-csa-explained.html",       label: "20 · CSA 详解" },
@@ -38,12 +42,14 @@
     { file: "slides/23-efficiency-chart.html",    label: "24 · 效率突破 · 核心数据" },
     { file: "slides/24-kv-cache-diet.html",       label: "25 · KV Cache 只剩 2%" },
 
+    // { file: "slides/25-adamw-%E5%81%8F%E7%A7%91.html", label: "§ 第 4 幕" },
     { file: "slides/25-adamw-%E5%81%8F%E7%A7%91.html", label: "26 · AdamW 偏科" },
     { file: "slides/26-muon-orthogonal.html",     label: "27 · Muon · 正交化" },
     { file: "slides/27-newton-schulz.html",       label: "28 · Newton-Schulz 迭代" },
     { file: "slides/28-rms-rescale.html",         label: "29 · RMS rescale" },
     { file: "slides/29-muon-vs-adamw.html",       label: "30 · Muon vs AdamW" },
 
+    // { file: "slides/30-infra-overview.html",      label: "§ 第 5 幕" },
     { file: "slides/30-infra-overview.html",      label: "31 · 基建概览" },
     { file: "slides/31-moe-comm-overlap.html",    label: "32 · MoE 通信计算重叠" },
     { file: "slides/32-tilelang.html",            label: "33 · TileLang DSL" },
@@ -52,6 +58,7 @@
     { file: "slides/35-disk-kv-cache.html",       label: "36 · 磁盘 KV Cache" },
     { file: "slides/36-infra-philosophy.html",    label: "37 · 工程哲学" },
 
+    // { file: "slides/37-posttraining-old.html",    label: "§ 第 6 幕" },
     { file: "slides/37-posttraining-old.html",    label: "38 · 旧范式痛点" },
     { file: "slides/38-two-stage-paradigm.html",  label: "39 · 两阶段总览" },
     { file: "slides/39-specialist-stage.html",    label: "40 · Specialist · Stage 1" },
@@ -60,7 +67,8 @@
     { file: "slides/42-grm-and-sandbox.html",     label: "43 · GRM + DSec 沙盒" },
     { file: "slides/43-paradigm-shift.html",      label: "44 · 范式革命" },
 
-    { file: "slides/44-team-dna.html",            label: "45 · 团队画像 · 竞赛基因" },
+    // { file: "slides/44-team-dna.html",            label: "§ 第 7 幕 " },
+    { file: "slides/44-team-dna.html",            label: "45  · 团队画像 · 竞赛基因" },
     { file: "slides/45-codeforces.html",          label: "46 · Codeforces 3206" },
     { file: "slides/46-putnam.html",              label: "47 · Putnam 120/120" },
     { file: "slides/47-math-benchmarks.html",     label: "48 · 数学 Benchmarks" },
@@ -68,6 +76,7 @@
     { file: "slides/49-vs-latest-sota.html",      label: "50 · vs Opus 4.7 / GPT-5.5" },
     { file: "slides/50-verdict-strong.html",      label: "51 · 开源天花板" },
 
+    // { file: "slides/51-transition.html",          label: "§ 第 8 幕" },
     { file: "slides/51-transition.html",          label: "52 · 但是。" },
     { file: "slides/52-hle.html",                 label: "53 · HLE · 硬推理差距" },
     { file: "slides/53-hle-tools.html",           label: "54 · HLE w/tools · 倒数" },
@@ -77,6 +86,7 @@
     { file: "slides/57-paper-admits.html",        label: "58 · 论文自认局限" },
     { file: "slides/58-verdict-weak.html",        label: "59 · 品味差距" },
 
+    // { file: "slides/59-context-redefined.html",   label: "§ 第 9 幕" },
     { file: "slides/59-context-redefined.html",   label: "60 · 1M · 不再省字" },
     { file: "slides/60-agentic-prefill.html",     label: "61 · Agentic Prefill 数据" },
     { file: "slides/61-price-table.html",         label: "62 · 官方价格表" },
@@ -85,12 +95,14 @@
     { file: "slides/64-ecosystem-hook.html",      label: "65 · 生态卡位" },
     { file: "slides/65-%E6%99%AE%E6%83%A0-verdict.html",  label: "66 · 普惠时代" },
 
+    // { file: "slides/66-paper-honesty.html",       label: "§ 第 10 幕" },
     { file: "slides/66-paper-honesty.html",       label: "67 · 论文坦白" },
     { file: "slides/67-roadmap-v5.html",          label: "68 · V5 预告" },
     { file: "slides/68-ascend-honest.html",       label: "69 · 昇腾 950 · 诚实" },
     { file: "slides/69-four-theses-closed.html",  label: "70 · 观点闭环" },
     { file: "slides/70-xunzi.html",               label: "71 · 荀子金句" },
 
+    // { file: "slides/71-overall-verdict.html",     label: "§ 第 11 幕" },
     { file: "slides/71-overall-verdict.html",     label: "72 · 整体定位" },
     // { file: "slides/72-credits.html",             label: "73 · 鸣谢" }
   ];
