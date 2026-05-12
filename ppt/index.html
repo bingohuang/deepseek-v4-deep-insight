@@ -292,8 +292,8 @@
     });
   }
 
-  function next() { show(Math.min(current + 1, deck.length - 1)); }
-  function prev() { show(Math.max(current - 1, 0)); }
+  function next() { show((current + 1) % deck.length); }
+  function prev() { show((current - 1 + deck.length) % deck.length); }
 
   // Build TOC
   deck.forEach((item, i) => {
