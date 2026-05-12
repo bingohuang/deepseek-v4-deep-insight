@@ -19,6 +19,22 @@
 <body>
 <div id="root"></div>
 
+  <!-- BGM: tech mood (Apple Silicon / product keynote vibe) -->
+  <audio id="bgm" src="bgm-tech.mp3" preload="auto" loop></audio>
+  <script>
+    (function() {
+      const audio = document.getElementById('bgm');
+      const tryPlay = () => {
+        audio.volume = 0.6;
+        audio.play().catch(() => {});
+      };
+      // Autoplay after fonts + first interaction (browser policy)
+      document.fonts.ready.then(tryPlay);
+      document.addEventListener('click', tryPlay, { once: true });
+      document.addEventListener('keydown', tryPlay, { once: true });
+    })();
+  </script>
+
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone@7.26.2/babel.min.js"></script>
@@ -388,7 +404,7 @@ function SceneArchitecture() {
           </div>
           {/* Right: stability chart */}
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 12, letterSpacing: '0.2em', color: C.light, textTransform: 'uppercase', marginBottom: 12 }}>训练稳定性 · Loss 曲线</div>
+            <div style={{ fontSize: 12, letterSpacing: '0.2em', color: C.light, textTransform: 'uppercase', marginBottom: -10 }}>训练稳定性 · Loss 曲线</div>
             <svg width="520" height="140" viewBox="0 0 520 140">
               {/* baseline - spiky */}
               <polyline fill="none" stroke="#CCC" strokeWidth="1.5" strokeDasharray="4,3"
@@ -401,7 +417,7 @@ function SceneArchitecture() {
                 <circle key={i} cx={i * 35} cy={140 - baselineData[i] * 80} r="5" fill="none" stroke="#E53E3E" strokeWidth="1.5" opacity={0.7} />
               ))}
             </svg>
-            <div style={{ display: 'flex', gap: 24, marginTop: 8, fontSize: 12, color: C.gray }}>
+            <div style={{ display: 'flex', gap: 24, marginTop: -10, fontSize: 12, color: C.gray }}>
               <span><span style={{ display: 'inline-block', width: 16, height: 2, background: '#CCC', verticalAlign: 'middle', marginRight: 6, borderTop: '1px dashed #CCC' }}></span>Baseline（3 次 spike）</span>
               <span><span style={{ display: 'inline-block', width: 16, height: 3, background: C.blue, borderRadius: 2, verticalAlign: 'middle', marginRight: 6 }}></span>+ mHC（全程稳定）</span>
             </div>
@@ -511,9 +527,9 @@ function SceneBenchmarks() {
       </div>
 
       {/* BUT - turning point */}
-      <div style={{ position: 'absolute', top: '62%', left: '50%', transform: `translate(-50%, -50%) scale(${butScale})`, opacity: butOp }}>
-        <div style={{ fontFamily: '"Source Serif 4", "Noto Serif SC", Georgia, serif', fontSize: 180, fontWeight: 700, color: C.ink, lineHeight: 1 }}>
-          但是。
+      <div style={{ position: 'absolute', top: '68%', left: '50%', transform: `translate(-50%, -50%) scale(${butScale})`, opacity: butOp }}>
+        <div style={{ fontFamily: '"Source Serif 4", "Noto Serif SC", Georgia, serif', fontSize: 100, fontWeight: 600, color: C.blue, lineHeight: 1 }}>
+          但是
         </div>
       </div>
 
