@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>DeepSeek-V4 · 迈入百万上下文普惠时代 · 技术深度解读 v2</title>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- DECK MANIFEST · 73 pages (00-72)                        -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<script>
+  window.DECK_MANIFEST = [
+    // { file: "slides/00-cover.html",              label: "§ 第 0 幕" },
+    { file: "slides/00-cover.html",              label: "§~封面" },
+    { file: "slides/02-positioning.html",        label: "定位反题" },
+    { file: "slides/03-four-theses.html",        label: "四个核心观点" },
+    { file: "slides/01-onepager.html",           label: "One-Pager · 核心数据速览" },
+    { file: "slides/04-roadmap.html",            label: "全篇 Roadmap" },
+
+    // { file: "slides/05-two-models.html",         label: "§ 第 1 幕" },
+    { file: "slides/05-two-models.html",         label: "§~两款模型" },
+    { file: "slides/06-moe-basics.html",         label: "MoE 本质 · 专家会议" },
+    { file: "slides/07-sparse-economics.html",   label: "稀疏激活的经济学" },
+    { file: "slides/08-training-data.html",      label: "32T tokens 数据" },
+    { file: "slides/09-training-stability.html", label: "训练稳定性" },
+    { file: "slides/10-specs-table.html",        label: "详细规格大表" },
+
+    // { file: "slides/11-mhc-problem.html",        label: "§ 第 2 幕" },
+    { file: "slides/11-mhc-problem.html",        label: "§~mHC · 残差瓶颈" },
+    { file: "slides/12-mhc-intuition.html",      label: "mHC · 核心思想" },
+    { file: "slides/13-mhc-math.html",           label: "mHC · 数学本质" },
+    { file: "slides/14-mhc-cost.html",           label: "mHC · 代价" },
+    { file: "slides/15-mhc-effect.html",         label: "mHC · 效果" },
+    { file: "slides/16-act2-transition.html",    label: "过渡" },
+
+    // { file: "slides/17-attention-bottleneck.html", label: "§ 第 3 幕" },
+    { file: "slides/17-attention-bottleneck.html", label: "§~Attention · 长上下文瓶颈" },
+    { file: "slides/18-hybrid-idea.html",         label: "Attention · 粗细配合" },
+    { file: "slides/19-csa-explained.html",       label: "CSA 详解" },
+    { file: "slides/20-hca-explained.html",       label: "HCA 详解" },
+    { file: "slides/21-supporting-tricks.html",   label: "配套技巧" },
+    { file: "slides/22-precision-stack.html",     label: "精度栈" },
+    { file: "slides/23-efficiency-chart.html",    label: "效率突破 · 核心数据" },
+    { file: "slides/24-kv-cache-diet.html",       label: "KV Cache 只剩 2%" },
+
+    // { file: "slides/25-adamw-%E5%81%8F%E7%A7%91.html", label: "§ 第 4 幕" },
+    { file: "slides/25-adamw-%E5%81%8F%E7%A7%91.html", label: "§~AdamW 偏科" },
+    { file: "slides/26-muon-orthogonal.html",     label: "Muon · 正交化" },
+    { file: "slides/27-newton-schulz.html",       label: "Newton-Schulz 迭代" },
+    { file: "slides/28-rms-rescale.html",         label: "RMS rescale" },
+    { file: "slides/29-muon-vs-adamw.html",       label: "Muon vs AdamW" },
+
+    // { file: "slides/30-infra-overview.html",      label: "§ 第 5 幕" },
+    { file: "slides/30-infra-overview.html",      label: "§~基建概览" },
+    { file: "slides/31-moe-comm-overlap.html",    label: "MoE 通信计算重叠" },
+    { file: "slides/32-tilelang.html",            label: "TileLang DSL" },
+    { file: "slides/33-determinism.html",         label: "批次无关确定性" },
+    { file: "slides/34-fp4-qat.html",             label: "FP4 QAT" },
+    { file: "slides/35-disk-kv-cache.html",       label: "磁盘 KV Cache" },
+    { file: "slides/36-infra-philosophy.html",    label: "工程哲学" },
+
+    // { file: "slides/37-posttraining-old.html",    label: "§ 第 6 幕" },
+    { file: "slides/37-posttraining-old.html",    label: "§~旧范式痛点" },
+    { file: "slides/38-two-stage-paradigm.html",  label: "两阶段总览" },
+    { file: "slides/39-specialist-stage.html",    label: "Specialist · Stage 1" },
+    { file: "slides/40-opd-stage.html",           label: "OPD · Stage 2" },
+    { file: "slides/41-reverse-kl.html",          label: "Reverse KL · 学生选老师" },
+    { file: "slides/42-grm-and-sandbox.html",     label: "GRM + DSec 沙盒" },
+    { file: "slides/43-paradigm-shift.html",      label: "范式革命" },
+
+    // { file: "slides/44-team-dna.html",            label: "§ 第 7 幕 " },
+    { file: "slides/44-team-dna.html",            label: "§~团队画像 · 竞赛基因" },
+    { file: "slides/45-codeforces.html",          label: "Codeforces 3206" },
+    { file: "slides/46-putnam.html",              label: "Putnam 120/120" },
+    { file: "slides/47-math-benchmarks.html",     label: "数学 Benchmarks" },
+    { file: "slides/48-coding-benchmarks.html",   label: "编程 Benchmarks" },
+    { file: "slides/49-vs-latest-sota.html",      label: "vs Opus 4.7 / GPT-5.5" },
+    { file: "slides/50-verdict-strong.html",      label: "开源天花板" },
+
+    // { file: "slides/51-transition.html",          label: "§ 第 8 幕" },
+    { file: "slides/51-transition.html",          label: "§~但是。" },
+    { file: "slides/52-hle.html",                 label: "HLE · 硬推理差距" },
+    { file: "slides/53-hle-tools.html",           label: "HLE w/tools · 倒数" },
+    { file: "slides/54-terminal-bench.html",      label: "Terminal Bench 差 15pp" },
+    { file: "slides/55-creative-writing.html",    label: "创意写作 · 不如 Opus 4.5" },
+    { file: "slides/56-aesthetic-gap.html",       label: "品味光谱" },
+    { file: "slides/57-paper-admits.html",        label: "论文自认局限" },
+    { file: "slides/58-verdict-weak.html",        label: "品味差距" },
+
+    // { file: "slides/59-context-redefined.html",   label: "§ 第 9 幕" },
+    { file: "slides/59-context-redefined.html",   label: "§~1M · 不再省字" },
+    { file: "slides/60-agentic-prefill.html",     label: "Agentic Prefill 数据" },
+    { file: "slides/61-price-table.html",         label: "官方价格表" },
+    { file: "slides/62-price-vs-latest.html",     label: "Price vs Opus 4.7" },
+    { file: "slides/63-flash-is-%E5%B1%A0%E5%A4%AB.html", label: "Flash · 价格屠夫" },
+    { file: "slides/64-ecosystem-hook.html",      label: "生态卡位" },
+    { file: "slides/65-%E6%99%AE%E6%83%A0-verdict.html",  label: "普惠时代" },
+
+    // { file: "slides/66-paper-honesty.html",       label: "§ 第 10 幕" },
+    { file: "slides/66-paper-honesty.html",       label: "§~论文坦白" },
+    { file: "slides/67-roadmap-v5.html",          label: "V5 预告" },
+    { file: "slides/68-ascend-honest.html",       label: "昇腾 9诚实" },
+    { file: "slides/69-four-theses-closed.html",  label: "观点闭环" },
+    { file: "slides/70-xunzi.html",               label: "荀子金句" },
+
+    // { file: "slides/71-overall-verdict.html",     label: "§ 第 11 幕" },
+    { file: "slides/71-overall-verdict.html",     label: "§~整体定位" },
+    { file: "slides/72-credits.html",             label: "鸣谢" }
+  ];
+
+  window.DECK_WIDTH = 1920;
+  window.DECK_HEIGHT = 1080;
+</script>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: #0a0a0a;
+    overflow: hidden;
+    font-family: -apple-system, "PingFang SC", sans-serif;
+  }
+  #stage {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform-origin: top left;
+    will-change: transform;
+    background: #fff;
+    box-shadow: 0 10px 60px rgba(0,0,0,0.4);
+  }
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    background: #fff;
+  }
+  .counter {
+    position: fixed;
+    bottom: 20px; right: 20px;
+    background: rgba(0,0,0,0.65);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+    z-index: 100;
+    user-select: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    max-width: 520px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .counter:hover { opacity: 1; }
+  .counter .label { color: rgba(255,255,255,0.7); margin-left: 8px; }
+
+  .nav-zone {
+    position: fixed;
+    top: 0; bottom: 0;
+    width: 12%;
+    cursor: pointer;
+    z-index: 50;
+  }
+  .nav-zone.left  { left: 0; }
+  .nav-zone.right { right: 0; }
+  .nav-hint {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .nav-zone.left  .nav-hint { left: 20px; }
+  .nav-zone.right .nav-hint { right: 20px; }
+  .nav-zone:hover .nav-hint { opacity: 1; }
+
+  /* TOC 侧边栏 */
+  .toc-toggle {
+    position: fixed;
+    top: 20px; left: 20px;
+    background: rgba(0,0,0,0.65);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    z-index: 120;
+    user-select: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    text-transform: uppercase;
+  }
+  .toc-toggle:hover { opacity: 1; }
+  .toc-panel {
+    position: fixed;
+    top: 0; left: -360px; bottom: 0;
+    width: 340px;
+    background: #0f0f0f;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    transition: left 0.25s ease;
+    z-index: 110;
+    overflow-y: auto;
+    padding: 56px 0 20px;
+    color: #ddd;
+  }
+  .toc-panel.open { left: 0; }
+  .toc-item {
+    padding: 8px 20px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: rgba(255,255,255,0.55);
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    font-variant-numeric: tabular-nums;
+  }
+  .toc-item:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.04);
+  }
+  .toc-item.active {
+    color: #4D6BFE;
+    border-left-color: #4D6BFE;
+    background: rgba(77,107,254,0.08);
+  }
+
+  @media print {
+    @page { size: 1920px 1080px; margin: 0; }
+    html, body { background: #fff; overflow: visible; height: auto; }
+    #stage { position: static; transform: none !important; box-shadow: none; }
+    .counter, .nav-zone, .toc-toggle, .toc-panel { display: none !important; }
+    .print-stack { display: block; }
+    .print-stack iframe {
+      width: 1920px;
+      height: 1080px;
+      page-break-after: always;
+      display: block;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <iframe id="frame" src="about:blank"></iframe>
+</div>
+
+<div class="nav-zone left"  id="navL"><div class="nav-hint">‹</div></div>
+<div class="nav-zone right" id="navR"><div class="nav-hint">›</div></div>
+<div class="counter" id="counter">1 / 1</div>
+
+<div class="toc-toggle" id="tocToggle">☰ Index</div>
+<div class="toc-panel" id="tocPanel"></div>
+
+<div class="print-stack" id="printStack" style="display:none;"></div>
+
+<script>
+(function () {
+  const W = window.DECK_WIDTH || 1920;
+  const H = window.DECK_HEIGHT || 1080;
+  const deck = window.DECK_MANIFEST || [];
+  const stage = document.getElementById('stage');
+  const frame = document.getElementById('frame');
+  const counter = document.getElementById('counter');
+  const printStack = document.getElementById('printStack');
+  const tocPanel = document.getElementById('tocPanel');
+  const tocToggle = document.getElementById('tocToggle');
+  const storageKey = 'deck-v2-index-' + location.pathname;
+  let current = 0;
+
+  stage.style.width  = W + 'px';
+  stage.style.height = H + 'px';
+
+  function fit() {
+    const s = Math.min(window.innerWidth / W, window.innerHeight / H);
+    const x = (window.innerWidth  - W * s) / 2;
+    const y = (window.innerHeight - H * s) / 2;
+    stage.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+    stage.style.top = '0';
+    stage.style.left = '0';
+  }
+
+  // 点击 iframe 内容后自动恢复焦点，保证快捷键不失效
+  frame.addEventListener('load', function () {
+    try {
+      frame.contentDocument.addEventListener('pointerup', function () {
+        window.focus();
+      });
+    } catch (_) {}
+  });
+
+  function show(idx) {
+    if (idx < 0 || idx >= deck.length) return;
+    current = idx;
+    frame.src = deck[idx].file;
+    counter.innerHTML = `${idx + 1} / ${deck.length} <span class="label">${deck[idx].label || ''}</span>`;
+    try { localStorage.setItem(storageKey, String(idx)); } catch (_) {}
+    if (location.hash !== '#' + (idx + 1)) {
+      history.replaceState(null, '', '#' + (idx + 1));
+    }
+    document.querySelectorAll('.toc-item').forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
+      if (i === idx) el.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  function next() { show((current + 1) % deck.length); }
+  function prev() { show((current - 1 + deck.length) % deck.length); }
+
+  // Build TOC
+  deck.forEach((item, i) => {
+    const el = document.createElement('div');
+    el.className = 'toc-item';
+    el.textContent = item.label || `Page ${i + 1}`;
+    el.addEventListener('click', () => { show(i); tocPanel.classList.remove('open'); });
+    tocPanel.appendChild(el);
+  });
+  tocToggle.addEventListener('click', () => tocPanel.classList.toggle('open'));
+  document.addEventListener('click', (e) => {
+    if (!tocPanel.contains(e.target) && !tocToggle.contains(e.target)) {
+      tocPanel.classList.remove('open');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    switch (e.key) {
+      case 'ArrowRight': case ' ': case 'PageDown': e.preventDefault(); next(); break;
+      case 'ArrowLeft':  case 'PageUp':              e.preventDefault(); prev(); break;
+      case 'Home':                                    e.preventDefault(); show(0); break;
+      case 'End':                                     e.preventDefault(); show(deck.length - 1); break;
+      case '0': case '1': case '2': case '3': case '4':
+      case '5': case '6': case '7': case '8': case '9':
+        e.preventDefault();
+        show(e.key === '0' ? deck.length - 1 : parseInt(e.key, 10) - 1);
+        break;
+      case 'p': case 'P':                             window.print(); break;
+      case 'i': case 'I':                             tocPanel.classList.toggle('open'); break;
+    }
+  });
+
+  document.getElementById('navL').addEventListener('click', prev);
+  document.getElementById('navR').addEventListener('click', next);
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', () => {
+    const m = location.hash.match(/^#(\d+)$/);
+    if (m) show(parseInt(m[1], 10) - 1);
+  });
+
+  const hashMatch = location.hash.match(/^#(\d+)$/);
+  if (hashMatch) current = Math.min(parseInt(hashMatch[1], 10) - 1, deck.length - 1);
+  else try {
+    const v = parseInt(localStorage.getItem(storageKey), 10);
+    if (!isNaN(v) && v >= 0 && v < deck.length) current = v;
+  } catch (_) {}
+  fit();
+  show(current);
+
+  window.addEventListener('beforeprint', () => {
+    printStack.innerHTML = '';
+    deck.forEach(item => {
+      const f = document.createElement('iframe');
+      f.src = item.file;
+      printStack.appendChild(f);
+    });
+    printStack.style.display = 'block';
+    document.getElementById('stage').style.display = 'none';
+  });
+  window.addEventListener('afterprint', () => {
+    printStack.innerHTML = '';
+    printStack.style.display = 'none';
+    document.getElementById('stage').style.display = '';
+  });
+})();
+</script>
+
+</body>
+</html>
