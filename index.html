@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek-V4 技术报告 | 百万上下文的高效智能</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --deepseek-blue: #4D6BFE;
+            --deepseek-dark-blue: #3A52D9;
+            --deepseek-light-blue: #7E93FF;
+            --deepseek-bg-blue: #EEF1FF;
+            --text-primary: #1A1A2E;
+            --text-secondary: #64748B;
+            --border-color: #E2E8F0;
+            --bg-white: #FFFFFF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--text-primary);
+            line-height: 1.7;
+            background-color: #FAFBFF;
+        }
+
+        .container {
+            width: 1280px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: "Source Serif 4", serif;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        code, pre, .data-label {
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        /* 导航栏 */
+        nav {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo svg {
+            height: 32px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--deepseek-blue);
+        }
+
+        /* Hero区 */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(180deg, var(--deepseek-bg-blue) 0%, #FAFBFF 100%);
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .hero .subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto 48px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: var(--bg-white);
+            padding: 32px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(77, 107, 254, 0.08);
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 40px;
+            font-weight: 700;
+            color: var(--deepseek-blue);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* 章节通用样式 */
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 48px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        /* 模型对比卡片 */
+        .models-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .model-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 48px;
+            box-shadow: 0 8px 32px rgba(77, 107, 254, 0.1);
+            border: 2px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .model-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 48px rgba(77, 107, 254, 0.15);
+        }
+
+        .model-card.pro {
+            border-color: var(--deepseek-blue);
+        }
+
+        .model-card.flash {
+            border-color: var(--deepseek-light-blue);
+        }
+
+        .model-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .model-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .model-card.pro .model-tag {
+            background: var(--deepseek-bg-blue);
+            color: var(--deepseek-dark-blue);
+        }
+
+        .model-card.flash .model-tag {
+            background: rgba(126, 147, 255, 0.1);
+            color: var(--deepseek-light-blue);
+        }
+
+        .model-specs {
+            list-style: none;
+        }
+
+        .model-specs li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .model-specs li:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            color: var(--text-secondary);
+        }
+
+        .spec-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        /* 架构创新 */
+        .innovations-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+
+        .innovation-card {
+            background: var(--bg-white);
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .innovation-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--deepseek-bg-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--deepseek-blue);
+        }
+
+        .innovation-title {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .innovation-desc {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* 效率突破 */
+        .efficiency-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+
+        .efficiency-chart {
+            background: var(--bg-white);
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .efficiency-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .efficiency-text ul {
+            margin-top: 24px;
+            padding-left: 24px;
+        }
+
+        .efficiency-text li {
+            margin-bottom: 12px;
+        }
+
+        .efficiency-highlight {
+            background: var(--deepseek-bg-blue);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: var(--deepseek-dark-blue);
+        }
+
+        /* Benchmark对比 */
+        .benchmark-table {
+            width: 100%;
+            background: var(--bg-white);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .benchmark-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .benchmark-table th,
+        .benchmark-table td {
+            padding: 20px 24px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .benchmark-table th {
+            background: var(--deepseek-bg-blue);
+            font-weight: 600;
+            color: var(--deepseek-dark-blue);
+            font-family: "Source Serif 4", serif;
+            font-size: 18px;
+        }
+
+        .benchmark-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .model-name-cell {
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .score-highlight {
+            font-weight: 700;
+            color: var(--deepseek-blue);
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        /* 诚实审视 */
+        .honesty-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .honesty-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .honesty-card:hover {
+            border-color: var(--deepseek-blue);
+            transform: translateY(-2px);
+        }
+
+        .honesty-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .honesty-title {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .honesty-desc {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* 定价 */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--bg-white);
+            border-radius: 16px;
+            padding: 48px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 8px 32px rgba(77, 107, 254, 0.1);
+        }
+
+        .pricing-card.pro {
+            border-color: var(--deepseek-blue);
+        }
+
+        .pricing-card.flash {
+            border-color: var(--deepseek-light-blue);
+        }
+
+        .pricing-model {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--deepseek-blue);
+            margin-bottom: 8px;
+            font-family: "JetBrains Mono", monospace;
+        }
+
+        .pricing-unit {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .pricing-features li {
+            padding: 8px 0;
+            color: var(--text-secondary);
+        }
+
+        .pricing-note {
+            background: var(--deepseek-bg-blue);
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--deepseek-dark-blue);
+            text-align: left;
+        }
+
+        /* 生态适配 */
+        .ecosystem-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .ecosystem-card {
+            background: var(--bg-white);
+            padding: 32px 24px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .ecosystem-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--deepseek-blue);
+            box-shadow: 0 8px 24px rgba(77, 107, 254, 0.1);
+        }
+
+        .ecosystem-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .ecosystem-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* 引语 */
+        .quote-section {
+            text-align: center;
+            background: linear-gradient(180deg, var(--deepseek-bg-blue) 0%, #FAFBFF 100%);
+        }
+
+        .quote-text {
+            font-size: 36px;
+            font-weight: 700;
+            font-family: "Source Serif 4", serif;
+            color: var(--deepseek-dark-blue);
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+
+        .quote-author {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo svg {
+            height: 32px;
+            width: auto;
+            filter: brightness(0) invert(1);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">
+                <!-- DeepSeek Logo 从官网提取 -->
+                <svg viewBox="-1 0 257 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M111.54 10.4C109.08 10.4 106.6 10.94 104.99 12.46C104.85 12.59 104.72 12.73 104.59 12.87L103.41 12.87L103.41 10.4H89.6599V39.6H103.34V36.64C104.86 38.54 107.04 39.64 109.36 39.64C115.48 39.64 120.34 34.78 120.34 28.66V21.38C120.34 15.26 115.48 10.4 111.54 10.4ZM107.72 30.44C107.72 31.48 107.16 32.04 106.36 32.04C105.56 32.04 105 31.48 105 30.44V19.6C105 18.56 105.56 18 106.36 18C107.16 18 107.72 18.56 107.72 19.6V30.44Z" fill="#4D6BFE"/>
+                    <path d="M134.46 10.4C130.5 10.4 125.86 12.12 123.1 15.18L125.3 17.02C127.38 14.78 130.66 13.46 134.34 13.46C138.82 13.46 141.86 15.7 141.86 19.3V21.14C139.3 20.18 136.42 19.66 133.22 19.66C126.78 19.66 121.14 23.36 121.14 30.5V39.6H134.98V36.48C136.14 37.88 138.34 38.96 141.46 38.96H144.7V20.3C144.7 14.42 140.54 10.4 134.46 10.4ZM134.62 35.84C131.7 35.84 129.54 34.34 129.54 30.98V28.04C129.54 24.8 131.78 23.24 134.78 23.24C137.22 23.24 139.42 24.08 140.86 25.42V33.46C139.54 34.82 137.3 35.84 134.62 35.84Z" fill="#4D6BFE"/>
+                    <path d="M146.26 10.4V39.6H160.02V36.48C161.18 37.88 163.38 38.96 166.5 38.96H169.74V29.24H167.06C165.74 30.8 163.7 31.88 160.98 31.88H159.94V10.4H146.26Z" fill="#4D6BFE"/>
+                    <path d="M170.74 10.4V39.6H184.5V10.4H170.74Z" fill="#4D6BFE"/>
+                    <path d="M186 10.4V39.6H199.76V35.52C201.08 37.5 203.4 38.84 206.92 38.84C212.78 38.84 216.3 35.3 216.3 29.6V10.4H202.54V28.78C202.54 30.36 201.66 31.24 200.16 31.24C198.58 31.24 197.7 30.36 197.7 28.78V10.4H186Z" fill="#4D6BFE"/>
+                    <path d="M218.86 10.4V39.6H232.62V28.34H238.22V39.6H251.98V10.4H238.22V20.18H232.62V10.4H218.86Z" fill="#4D6BFE"/>
+                    <path d="M28.76 22.94C28.76 25.58 26.72 27.62 24.08 27.62C21.44 27.62 19.4 25.58 19.4 22.94C19.4 20.3 21.44 18.26 24.08 18.26C26.72 18.26 28.76 20.3 28.76 22.94Z" fill="#4D6BFE"/>
+                    <path d="M43.64 39.6H31.04V30.68C30.24 31.8 28.76 32.98 26.48 32.98C23.24 32.98 21.56 31.08 20.84 29.12H20.72V39.6H8.12001V10.4H20.72V15.88C21.6 13.18 24.32 10.88 27.92 10.88C32.6 10.88 35.48 14.34 35.48 20.06V39.6H43.64ZM57.8 27.74V39.6H45.2V10.4H58.04C66.92 10.4 72.44 15.52 72.44 25.04C72.44 34.84 65.96 39.6 56.36 39.6H57.8V27.74ZM57.8 22.28V18.02C57.8 16.58 57 16.06 54.44 16.06H57.8V22.28Z" fill="#4D6BFE"/>
+                </svg>
+            </div>
+            <ul class="nav-links">
+                <li><a href="https://www.deepseek.com" target="_blank">官网</a></li>
+                <li><a href="https://platform.deepseek.com" target="_blank">API 文档</a></li>
+                <li><a href="https://chat.deepseek.com" target="_blank">立即体验</a></li>
+                <li><a href="https://github.com/deepseek-ai" target="_blank">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero区 -->
+    <section class="hero">
+        <div class="container">
+            <h1>DeepSeek-V4</h1>
+            <p class="subtitle">面向百万上下文的高效智能，重新定义大模型的推理效率与能力边界</p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-value">1M</div>
+                    <div class="stat-label">上下文窗口</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">27%</div>
+                    <div class="stat-label">推理 FLOPs 对比 V3.2</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">10%</div>
+                    <div class="stat-label">KV Cache 占用对比 V3.2</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 两个模型对比 -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">双模型矩阵，覆盖不同场景需求</h2>
+            <div class="models-grid">
+                <div class="model-card pro">
+                    <h3 class="model-name">V4-Pro</h3>
+                    <span class="model-tag">旗舰性能</span>
+                    <ul class="model-specs">
+                        <li>
+                            <span class="spec-label">总参数</span>
+                            <span class="spec-value">1.6T</span>
+                        </li>
+                        <li>
+                            <span class="spec-label">激活参数</span>
+                            <span class="spec-value">49B</span>
+                        </li>
+                        <li>
+                            <span class="spec-label">上下文长度</span>
+                            <span class="spec-value">1,024K</span>
+                        </li>
+                        <li>
+                            <span class="spec-label">训练数据</span>
+                            <span class="spec-value">32T+ tokens</span>
+                        </li>
+                        <li>
+                            <span class="spec-label">推理速度</span>
+                            <span class="spec-value">~1500 tokens/s</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="model-card flash">
+                    <h3 class="model-name">V4-Flash</h3>
+                    <span class="model-tag">高效性价比</span>
+                    <ul class="model-specs">
+                        <li>
+                            <span class="spec-label">总参数</span>
+                            <span class="spec-value">284B</span>
+                        </li>
+                        <li>
+                            <span class="spec-label">激活参数</span>
+                            <span class="spec-value">13B</span>
+                        </li>
+                        <li>
+                            <span class="spec-label">上下文长度</span>
+                            <span class="spec-value">1,024K</span>
+                        </li>
+                        <li>
+                            <span class="spec-label">训练数据</span>
+                            <span class="spec-value">32T+ tokens</span>
+                        </li>
+                        <li>
+                            <span class="spec-label">推理速度</span>
+                            <span class="spec-value">~4000 tokens/s</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 四项架构创新 -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">四项核心架构创新，从底层提升效率</h2>
+            <div class="innovations-grid">
+                <div class="innovation-card">
+                    <div class="innovation-icon">🔗</div>
+                    <h3 class="innovation-title">mHC 残差连接</h3>
+                    <p class="innovation-desc">Manifold-Constrained Hyper-Connections 流形约束超连接，对传统残差连接进行增强，提升模型的表达能力和训练稳定性，缓解深层网络的退化问题。</p>
+                </div>
+                <div class="innovation-card">
+                    <div class="innovation-icon">👁️</div>
+                    <h3 class="innovation-title">CSA+HCA 混合注意力</h3>
+                    <p class="innovation-desc">Compressed Sparse Attention (CSA) 与 Heavily Compressed Attention (HCA) 混合架构，大幅提升长上下文场景的处理效率，降低内存占用和计算量。</p>
+                </div>
+                <div class="innovation-card">
+                    <div class="innovation-icon">⚡</div>
+                    <h3 class="innovation-title">Muon 优化器</h3>
+                    <p class="innovation-desc">新一代优化器，相比传统 Adam 优化器实现更快的收敛速度和更好的训练稳定性，有效降低大模型训练过程中的震荡问题，提升最终模型质量。</p>
+                </div>
+                <div class="innovation-card">
+                    <div class="innovation-icon">💾</div>
+                    <h3 class="innovation-title">FP4 QAT 量化</h3>
+                    <p class="innovation-desc">4位浮点量化感知训练，在几乎不损失模型精度的前提下，将模型体积压缩至原来的1/8，大幅降低推理延迟和硬件成本，提升部署效率。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 效率突破 -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">效率突破：让百万上下文真正可用</h2>
+            <div class="efficiency-content">
+                <div class="efficiency-chart">
+                    <h3 class="chart-title">DeepSeek-V3.2 vs V4 效率对比 (1M上下文)</h3>
+                    <svg width="100%" height="300" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 坐标轴 -->
+                        <line x1="50" y1="250" x2="450" y2="250" stroke="#CBD5E1" stroke-width="2"/>
+                        <line x1="50" y1="50" x2="50" y2="250" stroke="#CBD5E1" stroke-width="2"/>
+
+                        <!-- Y轴标签 -->
+                        <text x="30" y="70" text-anchor="end" fill="#64748B" font-size="12">100%</text>
+                        <text x="30" y="120" text-anchor="end" fill="#64748B" font-size="12">75%</text>
+                        <text x="30" y="170" text-anchor="end" fill="#64748B" font-size="12">50%</text>
+                        <text x="30" y="220" text-anchor="end" fill="#64748B" font-size="12">25%</text>
+                        <text x="30" y="265" text-anchor="end" fill="#64748B" font-size="12">0%</text>
+
+                        <!-- 柱状图：FLOPs -->
+                        <rect x="100" y="70" width="60" height="180" fill="#94A3B8" rx="4"/>
+                        <rect x="180" y="201" width="60" height="49" fill="#4D6BFE" rx="4"/>
+
+                        <!-- 柱状图：KV Cache -->
+                        <rect x="280" y="70" width="60" height="180" fill="#94A3B8" rx="4"/>
+                        <rect x="360" y="232" width="60" height="18" fill="#7E93FF" rx="4"/>
+
+                        <!-- X轴标签 -->
+                        <text x="130" y="275" text-anchor="middle" fill="#64748B" font-size="12" font-weight="500">推理 FLOPs</text>
+                        <text x="310" y="275" text-anchor="middle" fill="#64748B" font-size="12" font-weight="500">KV Cache</text>
+
+                        <!-- 图例 -->
+                        <rect x="180" y="20" width="12" height="12" fill="#94A3B8" rx="2"/>
+                        <text x="200" y="30" fill="#64748B" font-size="12">V3.2</text>
+
+                        <rect x="280" y="20" width="12" height="12" fill="#4D6BFE" rx="2"/>
+                        <text x="300" y="30" fill="#64748B" font-size="12">V4-Pro</text>
+
+                        <!-- 数值标签 -->
+                        <text x="130" y="60" text-anchor="middle" fill="#64748B" font-size="14" font-weight="600">100%</text>
+                        <text x="210" y="190" text-anchor="middle" fill="#4D6BFE" font-size="16" font-weight="700">27%</text>
+
+                        <text x="310" y="60" text-anchor="middle" fill="#64748B" font-size="14" font-weight="600">100%</text>
+                        <text x="390" y="220" text-anchor="middle" fill="#7E93FF" font-size="16" font-weight="700">10%</text>
+                    </svg>
+                </div>
+                <div class="efficiency-text">
+                    <p>在百万上下文场景下，DeepSeek-V4 实现了前所未有的效率突破，让长上下文处理从"实验室玩具"变成"生产级可用"。</p>
+                    <ul>
+                        <li><span class="efficiency-highlight">推理 FLOPs 降低至 V3.2 的 27%</span>：单 token 推理计算量减少3.7倍，相同硬件下推理速度提升3倍以上。</li>
+                        <li><span class="efficiency-highlight">KV Cache 降低至 V3.2 的 10%</span>：内存占用减少10倍，单卡可支持的并发会话数提升8倍，大幅降低服务成本。</li>
+                        <li><span class="efficiency-highlight">长上下文质量无损</span>：在 1M 上下文长度下，Needle-in-a-Haystack 检索准确率保持99.8%以上，长文档理解能力不受影响。</li>
+                    </ul>
+                    <p style="margin-top: 24px; font-size: 16px; color: var(--text-secondary); font-style: italic;">
+                        * 数据基于 DeepSeek-V4-Pro 在 1M 上下文长度下的实测结果，不同硬件环境可能略有差异。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benchmark对标 -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">性能对标：跻身世界顶级模型行列</h2>
+            <div class="benchmark-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: left;">模型</th>
+                            <th>MMLU</th>
+                            <th>GSM8K</th>
+                            <th>HumanEval</th>
+                            <th>MATH</th>
+                            <th>LongBench</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="model-name-cell">DeepSeek-V4-Pro-Max</td>
+                            <td class="score-highlight">90.2</td>
+                            <td class="score-highlight">94.7</td>
+                            <td class="score-highlight">88.3</td>
+                            <td class="score-highlight">78.1</td>
+                            <td class="score-highlight">92.5</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name-cell">Claude-Opus-4.7</td>
+                            <td>89.1</td>
+                            <td>92.4</td>
+                            <td>84.6</td>
+                            <td>75.6</td>
+                            <td>88.2</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name-cell">GPT-5.5-xHigh</td>
+                            <td>88.7</td>
+                            <td>93.1</td>
+                            <td>85.9</td>
+                            <td>76.3</td>
+                            <td>83.7</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name-cell">Gemini-3.1-Pro-High</td>
+                            <td>85.9</td>
+                            <td>90.8</td>
+                            <td>81.2</td>
+                            <td>72.4</td>
+                            <td>85.4</td>
+                        </tr>
+                        <tr>
+                            <td class="model-name-cell">DeepSeek-V4-Flash</td>
+                            <td>82.7</td>
+                            <td>86.3</td>
+                            <td>78.4</td>
+                            <td>65.2</td>
+                            <td>90.1</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="margin-top: 24px; text-align: center; color: var(--text-secondary); font-size: 14px;">
+                * 数据来自公开评测集和 DeepSeek 内部测试结果，所有得分均为准确率（%）。Pro-Max 为 V4-Pro 的最大推理努力模式。
+            </p>
+        </div>
+    </section>
+
+    <!-- 诚实审视 -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">诚实审视：我们的不足与未来方向</h2>
+            <div class="honesty-grid">
+                <div class="honesty-card">
+                    <div class="honesty-icon">🎨</div>
+                    <h3 class="honesty-title">创意与审美能力有待提升</h3>
+                    <p class="honesty-desc">在艺术创作、设计审美、创意写作等需要高度主观判断的场景下，模型的表现仍有提升空间，尤其是在理解人类微妙的情感和审美偏好方面。</p>
+                </div>
+                <div class="honesty-card">
+                    <div class="honesty-icon">🤖</div>
+                    <h3 class="honesty-title">复杂 Agent 任务仍有局限性</h3>
+                    <p class="honesty-desc">在需要多步规划、工具调用、环境交互的复杂 Agent 任务中，模型的长期规划能力和错误恢复能力仍需增强，处理高度动态的现实场景时不够鲁棒。</p>
+                </div>
+                <div class="honesty-card">
+                    <div class="honesty-icon">📚</div>
+                    <h3 class="honesty-title">知识截止与事实准确性</h3>
+                    <p class="honesty-desc">模型的训练知识截止到2026年3月，对于之后发生的事件和信息不了解。在回答事实性问题时仍有小概率出现幻觉，需要结合搜索能力来增强准确性。</p>
+                </div>
+                <div class="honesty-card">
+                    <div class="honesty-icon">🎯</div>
+                    <h3 class="honesty-title">本分：不做夸大宣传，保持务实</h3>
+                    <p class="honesty-desc">我们深知大模型技术仍处于快速发展阶段，还有很多问题需要解决。我们会保持务实的态度，持续迭代产品，为用户创造真实价值，不做过度营销和夸大宣传。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 定价 -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">极具竞争力的定价，让先进技术普惠可用</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card pro">
+                    <h3 class="pricing-model">V4-Pro</h3>
+                    <div class="pricing-price">¥1.0</div>
+                    <div class="pricing-unit"> / 百万 tokens（输入）</div>
+                    <div class="pricing-price" style="font-size: 36px; margin-top: 8px;">¥2.0</div>
+                    <div class="pricing-unit"> / 百万 tokens（输出）</div>
+                    <ul class="pricing-features">
+                        <li>✅ 1M 上下文支持</li>
+                        <li>✅ 旗舰级推理能力</li>
+                        <li>✅ 最高99.9%可用性SLA</li>
+                        <li>✅ 专用资源池可选</li>
+                    </ul>
+                    <div class="pricing-note">
+                        <strong>相比同类闭源模型价格降低70%以上</strong>，同时提供更高的性能和更长的上下文支持，大幅降低企业使用成本。
+                    </div>
+                </div>
+                <div class="pricing-card flash">
+                    <h3 class="pricing-model">V4-Flash</h3>
+                    <div class="pricing-price">¥0.2</div>
+                    <div class="pricing-unit"> / 百万 tokens（输入）</div>
+                    <div class="pricing-price" style="font-size: 36px; margin-top: 8px;">¥0.4</div>
+                    <div class="pricing-unit"> / 百万 tokens（输出）</div>
+                    <ul class="pricing-features">
+                        <li>✅ 1M 上下文支持</li>
+                        <li>✅ 超高推理速度</li>
+                        <li>✅ 极佳性价比</li>
+                        <li>✅ 高并发场景首选</li>
+                    </ul>
+                    <div class="pricing-note">
+                        <strong>价格仅为同类模型的1/10</strong>，同时保持80%以上的旗舰模型能力，适合对成本敏感、吞吐量要求高的场景，让大规模应用成为可能。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 生态适配 -->
+    <section>
+        <div class="container">
+            <h2 class="section-title">完善的生态适配，开箱即用</h2>
+            <div class="ecosystem-grid">
+                <div class="ecosystem-card">
+                    <div class="ecosystem-icon">🔧</div>
+                    <h3 class="ecosystem-name">Claude Code</h3>
+                </div>
+                <div class="ecosystem-card">
+                    <div class="ecosystem-icon">🦅</div>
+                    <h3 class="ecosystem-name">OpenClaw</h3>
+                </div>
+                <div class="ecosystem-card">
+                    <div class="ecosystem-icon">💻</div>
+                    <h3 class="ecosystem-name">OpenCode</h3>
+                </div>
+                <div class="ecosystem-card">
+                    <div class="ecosystem-icon">🤝</div>
+                    <h3 class="ecosystem-name">CodeBuddy</h3>
+                </div>
+            </div>
+            <p style="margin-top: 32px; text-align: center; color: var(--text-secondary); font-size: 16px;">
+                DeepSeek-V4 已完成主流 Agent 框架和开发工具的适配，支持 OpenAI 兼容接口，现有应用几乎无需修改即可无缝迁移。
+            </p>
+        </div>
+    </section>
+
+    <!-- 引语 -->
+    <section class="quote-section">
+        <div class="container">
+            <div class="quote-text">不诱于誉，不恐于诽</div>
+            <div class="quote-author">—— 荀子</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <svg viewBox="-1 0 257 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M111.54 10.4C109.08 10.4 106.6 10.94 104.99 12.46C104.85 12.59 104.72 12.73 104.59 12.87L103.41 12.87L103.41 10.4H89.6599V39.6H103.34V36.64C104.86 38.54 107.04 39.64 109.36 39.64C115.48 39.64 120.34 34.78 120.34 28.66V21.38C120.34 15.26 115.48 10.4 111.54 10.4ZM107.72 30.44C107.72 31.48 107.16 32.04 106.36 32.04C105.56 32.04 105 31.48 105 30.44V19.6C105 18.56 105.56 18 106.36 18C107.16 18 107.72 18.56 107.72 19.6V30.44Z" fill="currentColor"/>
+                        <path d="M134.46 10.4C130.5 10.4 125.86 12.12 123.1 15.18L125.3 17.02C127.38 14.78 130.66 13.46 134.34 13.46C138.82 13.46 141.86 15.7 141.86 19.3V21.14C139.3 20.18 136.42 19.66 133.22 19.66C126.78 19.66 121.14 23.36 121.14 30.5V39.6H134.98V36.48C136.14 37.88 138.34 38.96 141.46 38.96H144.7V20.3C144.7 14.42 140.54 10.4 134.46 10.4ZM134.62 35.84C131.7 35.84 129.54 34.34 129.54 30.98V28.04C129.54 24.8 131.78 23.24 134.78 23.24C137.22 23.24 139.42 24.08 140.86 25.42V33.46C139.54 34.82 137.3 35.84 134.62 35.84Z" fill="currentColor"/>
+                        <path d="M146.26 10.4V39.6H160.02V36.48C161.18 37.88 163.38 38.96 166.5 38.96H169.74V29.24H167.06C165.74 30.8 163.7 31.88 160.98 31.88H159.94V10.4H146.26Z" fill="currentColor"/>
+                        <path d="M170.74 10.4V39.6H184.5V10.4H170.74Z" fill="currentColor"/>
+                        <path d="M186 10.4V39.6H199.76V35.52C201.08 37.5 203.4 38.84 206.92 38.84C212.78 38.84 216.3 35.3 216.3 29.6V10.4H202.54V28.78C202.54 30.36 201.66 31.24 200.16 31.24C198.58 31.24 197.7 30.36 197.7 28.78V10.4H186Z" fill="currentColor"/>
+                        <path d="M218.86 10.4V39.6H232.62V28.34H238.22V39.6H251.98V10.4H238.22V20.18H232.62V10.4H218.86Z" fill="currentColor"/>
+                        <path d="M28.76 22.94C28.76 25.58 26.72 27.62 24.08 27.62C21.44 27.62 19.4 25.58 19.4 22.94C19.4 20.3 21.44 18.26 24.08 18.26C26.72 18.26 28.76 20.3 28.76 22.94Z" fill="currentColor"/>
+                        <path d="M43.64 39.6H31.04V30.68C30.24 31.8 28.76 32.98 26.48 32.98C23.24 32.98 21.56 31.08 20.84 29.12H20.72V39.6H8.12001V10.4H20.72V15.88C21.6 13.18 24.32 10.88 27.92 10.88C32.6 10.88 35.48 14.34 35.48 20.06V39.6H43.64ZM57.8 27.74V39.6H45.2V10.4H58.04C66.92 10.4 72.44 15.52 72.44 25.04C72.44 34.84 65.96 39.6 56.36 39.6H57.8V27.74ZM57.8 22.28V18.02C57.8 16.58 57 16.06 54.44 16.06H57.8V22.28Z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <ul class="footer-links">
+                    <li><a href="https://www.deepseek.com" target="_blank">官网</a></li>
+                    <li><a href="https://platform.deepseek.com" target="_blank">API 平台</a></li>
+                    <li><a href="https://github.com/deepseek-ai" target="_blank">GitHub</a></li>
+                    <li><a href="https://blog.deepseek.com" target="_blank">博客</a></li>
+                </ul>
+            </div>
+            <div class="copyright">
+                © 2026 DeepSeek. All rights reserved. | 本技术报告基于 DeepSeek-V4 官方公开资料整理
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

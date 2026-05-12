@@ -1,2 +1,3 @@
-# deepseek-v4-deep-insight
-DeepSeek-V4 技术报告深度解析
+# deepseek-v4-deep-prompt
+
+基于 Claude Code x Huashu-design，通过提示词将 deepseek-v4 的技术报告，转换成网页、PPT和视频等
